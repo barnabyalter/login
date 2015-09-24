@@ -1,5 +1,14 @@
 FROM abevoelker/ruby
 
+
+RUN \
+  apt-get update && \
+  apt-get install -y git-core && \
+  apt-get install -y ruby-dev && \
+  apt-get install -y libpq-dev && \
+  apt-get install -y make && \
+  apt-get clean -y
+
 # Add 'wsops' user which will run the application
 RUN adduser wsops --home /apps/wsops --shell /bin/bash --disabled-password --gecos ""
 
