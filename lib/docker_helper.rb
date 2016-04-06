@@ -20,7 +20,7 @@ class DockerHelper
   
   def self.enable
     puts "Enabling docker..."
-    puts `docker-machine start default`
+    puts `docker-machine start default` # starts docker daemon
     puts `docker-machine env`
     puts `eval "$(docker-machine env default)"`
   end

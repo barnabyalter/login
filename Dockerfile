@@ -16,19 +16,16 @@ ENV APP_HOME /login
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
-# Make ssh dir
+# make ssh dir
 RUN mkdir /root/.ssh/
 
-# Copy over private key, and set permissions
+# copy over private key, and set permissions
 ADD id_rsa /root/.ssh/id_rsa
 
-# Create known_hosts
+# create known_hosts
 RUN touch /root/.ssh/known_hosts
-# Add github key
-RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
-
-# Clone the conf files into the docker container
-# RUN git clone git@bitbucket.org:User/repo.git
+# add github key
+RUN ssh-keyscan -t rsa github.com >> /root/.ssh/known_hosts
 
 # install gems
 ADD Gemfile* $APP_HOME/
