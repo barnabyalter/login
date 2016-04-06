@@ -11,6 +11,29 @@
 # Configure Using Gemfile
 # gem 'pg'
 #
+
+# development: &default
+#   adapter: postgresql
+#   database: backbone_data_bootstrap_development
+#   min_messages: WARNING
+#   pool: 5
+#   username: postgres
+#   host: db
+#
+# test:
+#   <<: *default
+#   database: backbone_data_bootstrap_test
+
+development: &default
+  adapter: postgresql
+  min_messages: WARNING
+  pool: 5
+  host: db
+
+test:
+  <<: *default
+  database: backbone_data_bootstrap_test
+
 postgres: &postgres
   adapter: postgresql
   encoding: unicode
@@ -18,19 +41,19 @@ postgres: &postgres
 
 local: &local
   <<: *postgres
-  host: "localhost"
+  # host: "localhost"
   username: <%= (ENV['LOGIN_DB_USER'] || "login") %>
   password: <%= (ENV['LOGIN_DB_PASSWORD'] || "") %>
 
 remote: &remote
   <<: *local
-  host: <%= ENV['LOGIN_DB_HOST'] %>
+  # host: <%= ENV['LOGIN_DB_HOST'] %>
   port: <%= ENV['LOGIN_DB_PORT'] %>
   database: <%= ENV['LOGIN_DB_DATABASE'] %>
 
 remote_or_local: &remote_or_local
   <<: *local
-  host: <%= (ENV['LOGIN_DB_HOST'] || "localhost") %>
+  # host: <%= (ENV['LOGIN_DB_HOST'] || "localhost") %>
   port: <%= (ENV['LOGIN_DB_PORT'] || "") %>
   database: <%= (ENV['LOGIN_DB_DATABASE'] || "login") %>
 
