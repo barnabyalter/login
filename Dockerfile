@@ -27,9 +27,9 @@ RUN touch /root/.ssh/known_hosts
 # add github key
 RUN ssh-keyscan -t rsa github.com >> /root/.ssh/known_hosts
 
-# install gems
-ADD Gemfile* $APP_HOME/
-RUN bundle install
+# set bundle path to volume on separate container (configured in docker-compose)
+ENV BUNDLE_PATH /gembox
 
 # add application
 ADD . $APP_HOME
+WORKDIR $APP_HOME
