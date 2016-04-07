@@ -16,20 +16,24 @@ ENV APP_HOME /login
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
-# make ssh dir
-RUN mkdir /root/.ssh/
-
-# copy over private key, and set permissions
-ADD id_rsa /root/.ssh/id_rsa
-
-# create known_hosts
-RUN touch /root/.ssh/known_hosts
-# add github key
-RUN ssh-keyscan -t rsa github.com >> /root/.ssh/known_hosts
+# use to run app
+RUN adduser wsops --home /wsops --shell /bin/bash --disabled-password --gecos ""
 
 # set bundle path to volume on separate container (configured in docker-compose)
 ENV BUNDLE_PATH /gembox
 
-# add application
+# add application and set
 ADD . $APP_HOME
+RUN chown -R wsops:wsops $APP_HOME
+
+USER wsops
+# copy over private key, and set permissions
+RUN mkdir /wsops/.ssh/
+ADD id_rsa /wsops/.ssh/id_rsa
+
+# create known_hosts
+RUN touch /wsops/.ssh/known_hosts
+# add github key
+RUN ssh-keyscan -t rsa github.com >> /wsops/.ssh/known_hosts
+
 WORKDIR $APP_HOME

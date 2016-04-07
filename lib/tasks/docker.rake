@@ -12,10 +12,12 @@ namespace :docker do
     DockerHelper.preconfigure
   end
 
+  # builds docker compose after preconfiguring (for database)
   task :build => [:preconfigure] do
     puts `docker-compose build`
   end
 
+  # runs docker compose after building
   task :up => [:build] do
     puts `docker-compose up`
   end
