@@ -41,3 +41,6 @@ wiki
 features/cassettes/get_access_token.yml
 
 .vagrant
+
+id_rsa
+
