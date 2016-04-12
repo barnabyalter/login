@@ -18,6 +18,8 @@ services:
       - .:/login
     volumes_from:
       - gembox
+    environment:
+      - LOGIN_DB_HOST=db
 
   gembox:
     image: busybox
