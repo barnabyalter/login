@@ -1,15 +1,15 @@
-require 'docker_helper'
+require 'docker/docker_helper'
 
 namespace :docker do
 
   # runs setup commands to enable docker in terminal window, starting daemon if necessary
   task :enable do
-    DockerHelper.enable
+    Docker::DockerHelper.enable
   end
 
   # generates .env file for db configuration of docker-compose
   task :preconfigure do
-    DockerHelper.preconfigure
+    Docker::DockerHelper.preconfigure
   end
 
   # builds docker compose after preconfiguring (for database)
@@ -24,6 +24,6 @@ namespace :docker do
 
   # runs db setup rake tasks in docker-compose web container
   task :setup do
-    DockerHelper.setup
+    Docker::DockerHelper.setup
   end
 end
