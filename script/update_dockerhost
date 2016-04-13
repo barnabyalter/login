@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# clear existing dockerhost entry from /etc/hosts
+sudo sed -i '' '/[[:space:]]dockerhost$/d' /etc/hosts
+
+# get ip of running machine
+export DOCKER_IP="$(docker-machine ip)"
+
+# update /etc/hosts with docker machine ip
+[[ -n $DOCKER_IP ]] && sudo /bin/bash -c "echo \"${DOCKER_IP}	dockerhost\" >> /etc/hosts"

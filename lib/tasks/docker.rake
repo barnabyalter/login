@@ -37,4 +37,9 @@ namespace :docker do
     puts "Creating database and running migrations..."
     Docker::DockerHelper.setup_db
   end
+
+  desc "Update dockerhost host in /etc/hosts with IP of docker machine"
+  task :update_dockerhost do
+    `script/update_dockerhost`
+  end
 end

@@ -1,11 +1,28 @@
 # Login on Docker
 
-## Installation
+## Install Docker
 
 Follow the docker documentation to install: https://docs.docker.com/engine/installation/mac/
 
+To start the docker daemon:
+
+```
+rake docker:enable
+```
+
+To add docker commands to your PATH:
+
+```
+eval "$(docker-machine env default)"
+```
+
+You may wish to add the above command to your `~/.profile`.
+
+### Versions
+
 This docker configuration was built on the following versions:
 
+```
 $ docker -v
 => Docker version 1.10.3, build 20f81dd
 
@@ -14,40 +31,111 @@ $ docker-compose -v
 
 $ docker-machine -v
 => docker-machine version 0.6.0, build e27fb87
+```
 
 You may need to run `docker login` for access to pre-built images.
 
 ## Building and running Login
 
-Run `rake docker:enable` to start the docker daemon then `eval "$(docker-machine env default)"` to enable docker commands in your terminal.
+After starting the docker daemon and enabling docker commands, copy a passwordless private key for github into your repo (for use with Figs). Ensure the key is in the application root with filename `id_rsa`. Note that symlinking will not work with docker.
 
-Run `rake docker:up` to preconfigure, build, and run the application in its docker container, linked to its database. _Before_ running this, you will need to add a private key to the application directory named `id_rsa`. Docker uses this private key to run Figs.
+With `id_rsa` in your application root, preconfigure, build, and run the application in its docker containers:
 
-Run `rake docker:setup` to finish database setup for development and test environments.
+```
+rake docker:up
+```
 
-Execute arbitrary commands on the docker container with `docker-compose run web` followed by the command in question, for example: `docker-compose run web bin/rake spec` to run specs on docker.
+After the docker containers are up, finish database setup for development and test environments:
 
-## Docker images and containers
+```
+rake docker:setup
+```
 
-Run `docker ps` to list running containers and `docker ps -a` to list running and stopped containers. Run `docker rm` with the docker container hash to remove a container
+Execute arbitrary commands on the app's docker web container with `docker-compose run web` followed by the desired command. For example, to run tests on the docker web container:
 
-Run `docker images` to list top-level images and `docker ps -a` to list top-level and intermediate images. Docker uses intermediate images to cache steps of the build process. Run `docker rmi` with the docker image hash to remove an image.
+```
+docker-compose run web bin/rake spec
+```
 
-To destroy all your containers, run `docker rm $(docker ps -a -q)`, and to destroy all your images, run `docker rmi $(docker images -q)`.
+### View in browser
 
-## Note about bundler
+Determine the IP of the virtual host:
 
-Dockerfile configures bundler to install gems into a separate container "gembox" configured in docker-compose, based on a [blog post](https://medium.com/@fbzga/how-to-cache-bundle-install-with-docker-7bed453a5800#.bpd1rz5ya))
+```
+docker-machine ip
+```
 
-## Note about postgres
+View in browser with that IP on port 3000.
+
+Add a host `dockerhost` with this IP to your `/etc/hosts`:
+
+```
+rake docker:update_dockerhost
+```
+
+You can then view the app in your browser at `dockerhost:3000`
+
+### Bundler
+
+Dockerfile configures bundler to install gems into a separate container "gembox" configured in docker-compose, based on a [blog post](https://medium.com/@fbzga/how-to-cache-bundle-install-with-docker-7bed453a5800#.bpd1rz5ya). This avoids having to reinstall all gems when the web container must be rebuilt.
+
+### Postgres
 
 You can connect to the database container (built with default development configuration) using:
 
-`psql -h localhost -p 5432 -d login_development -U login`
+```
+psql -h localhost -p 5432 -d login_development -U login
+```
 
-## View in browser
+## Docker images and containers
 
-Use `docker-machine ip` to determine the IP of the virtual host. Alias this in `etc/hosts` as "dockerhost" and you should be able to view in browser
+List running docker containers:
+
+```
+docker ps
+```
+
+List running and stopped containers:
+
+```
+docker ps -a
+```
+
+Destroy a docker container:
+
+```
+docker rm
+```
+
+List top-level docker images:
+
+```
+docker images
+```
+
+List top-level and intermediate images (Docker uses intermediate images to cache steps of the build process):
+
+```
+docker images -a
+```
+
+Destroy a docker image:
+
+```
+docker rmi
+```
+
+Destroy all stopped containers:
+
+```
+docker rm $(docker ps -a -q)
+```
+
+Destroy all images:
+
+```
+docker rmi $(docker images -q)
+```
 
 ## Security
 
